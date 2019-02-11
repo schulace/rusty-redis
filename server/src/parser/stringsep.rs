@@ -16,9 +16,12 @@ impl<'a> Iterator for StringTokenizer<'a> {
     match first_char {
       Some('"') => {
         let (_head, tail) = self.buffer.split_at(1);
-        let next_quote = tail.find('"').unwrap();
-        self.buffer = &tail[next_quote + 1..];
-        Some(&tail[0..next_quote])
+        if let Some(next_quote) = tail.find('"') {
+          self.buffer = &tail[next_quote + 1..];
+          Some(&tail[0..next_quote])
+        } else {
+          None
+        }
       },
       Some(_) => {
         if let Some(index) = self.buffer.find(|c:char| c.is_whitespace()) {
